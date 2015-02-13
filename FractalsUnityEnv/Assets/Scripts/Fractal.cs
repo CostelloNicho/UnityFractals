@@ -13,6 +13,24 @@ public class Fractal : MonoBehaviour
 
     private int _depth = 0;
 
+    private static readonly Vector3[] ChildDirections =
+    {
+        Vector3.up,
+        Vector3.right,
+        Vector3.left,
+        Vector3.forward,
+		Vector3.back
+    };
+
+    private static readonly Quaternion[] ChildOrientations =
+    {
+        Quaternion.identity,
+        Quaternion.Euler(0f, 0f, -90f),
+        Quaternion.Euler(0f, 0f, 90f),
+        Quaternion.Euler(90f, 0f, 0f),
+		Quaternion.Euler(-90f, 0f, 0f)
+    };
+
     protected void Start()
     {
         gameObject.AddComponent<MeshFilter>().mesh = FractalMesh;
@@ -23,7 +41,7 @@ public class Fractal : MonoBehaviour
     }
 
 
-    private void Initialize(Fractal parent, Vector3 direction, Quaternion orientation)
+    private void Initialize(Fractal parent, int childIndex)
     {
         FractalMesh = parent.FractalMesh;
         FractalMat = parent.FractalMat;
@@ -32,22 +50,16 @@ public class Fractal : MonoBehaviour
         ChildScale = parent.ChildScale;
         transform.parent = parent.transform;
         transform.localScale = Vector3.one*ChildScale;
-        transform.localPosition = direction*(0.5f + 0.5f*ChildScale);
-        transform.localRotation = orientation;
+        transform.localPosition = ChildDirections[childIndex]*(0.5f + 0.5f*ChildScale);
+        transform.localRotation = ChildOrientations[childIndex];
     }
 
     private IEnumerator CreateChildren()
     {
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child").AddComponent<Fractal>()
-            .Initialize(this, Vector3.up, Quaternion.identity);
-
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child").AddComponent<Fractal>()
-            .Initialize(this, Vector3.right, Quaternion.Euler(0f, 0f, -90f));
-
-        yield return new WaitForSeconds(0.5f);
-        new GameObject("Fractal Child").AddComponent<Fractal>()
-            .Initialize(this, Vector3.left, Quaternion.Euler(0f, 0f, 90f));
+        for (var i = 0; i < ChildDirections.Length; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            new GameObject("Fractal Child").AddComponent<Fractal>().Initialize(this, i);
+        }
     }
 }
