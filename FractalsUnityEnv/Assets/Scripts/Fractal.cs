@@ -2,6 +2,7 @@
 
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Fractal : MonoBehaviour
 {
@@ -58,7 +59,7 @@ public class Fractal : MonoBehaviour
     {
         for (var i = 0; i < ChildDirections.Length; i++)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
             new GameObject("Fractal Child").AddComponent<Fractal>().Initialize(this, i);
         }
     }
