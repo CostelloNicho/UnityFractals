@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class Fractal : MonoBehaviour
 {
-    public Mesh FractalMesh;
+    public Mesh[] Meshes;
     public Material FractalMat;
 
     public int MaxDepth = 4;
@@ -32,10 +32,16 @@ public class Fractal : MonoBehaviour
 		Quaternion.Euler(-90f, 0f, 0f)
     };
 
+    private Material[] _materials;
+
     protected void Start()
     {
-        gameObject.AddComponent<MeshFilter>().mesh = FractalMesh;
-        gameObject.AddComponent<MeshRenderer>().material = FractalMat;
+
+        if(_materials == null)
+            InitializeMaterials();
+
+        gameObject.AddComponent<MeshFilter>().mesh = Meshes[Random.Range(0, Meshes.Length)];
+        gameObject.AddComponent<MeshRenderer>().material = _materials[_depth];
 
         if (_depth < MaxDepth)
             StartCoroutine(CreateChildren());
@@ -44,8 +50,8 @@ public class Fractal : MonoBehaviour
 
     private void Initialize(Fractal parent, int childIndex)
     {
-        FractalMesh = parent.FractalMesh;
-        FractalMat = parent.FractalMat;
+        Meshes = parent.Meshes;
+        _materials = parent._materials;
         MaxDepth = parent.MaxDepth;
         _depth = parent._depth + 1;
         ChildScale = parent.ChildScale;
@@ -53,6 +59,20 @@ public class Fractal : MonoBehaviour
         transform.localScale = Vector3.one*ChildScale;
         transform.localPosition = ChildDirections[childIndex]*(0.5f + 0.5f*ChildScale);
         transform.localRotation = ChildOrientations[childIndex];
+    }
+
+    private void InitializeMaterials()
+    {
+        _materials = new Material[MaxDepth + 1];
+        for (var i = 0; i < _materials.Length; ++i)
+        {
+            float t = i/(MaxDepth - 1f);
+            t *= t;
+            _materials[i] = new Material(FractalMat);
+            _materials[i].color = Color.Lerp(Color.blue, Color.white, t);
+        }
+        _materials[MaxDepth].color = Color.magenta;
+
     }
 
     private IEnumerator CreateChildren()
