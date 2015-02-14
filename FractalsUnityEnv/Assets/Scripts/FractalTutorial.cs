@@ -3,7 +3,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Fractal : MonoBehaviour
+public class FractalTutorial : MonoBehaviour
 {
     public Mesh[] Meshes;
     public Material FractalMat;
@@ -47,7 +47,7 @@ public class Fractal : MonoBehaviour
     }
 
 
-    private void Initialize(Fractal parent, int childIndex)
+    private void Initialize(FractalTutorial parent, int childIndex)
     {
         Meshes = parent.Meshes;
         _materials = parent._materials;
@@ -86,7 +86,7 @@ public class Fractal : MonoBehaviour
             if (Random.value < SpawnProbablity)
             {
                 yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
-                new GameObject("Fractal Child").AddComponent<Fractal>().Initialize(this, i);
+                new GameObject("FractalTutorial Child").AddComponent<FractalTutorial>().Initialize(this, i);
             }
         }
     }
