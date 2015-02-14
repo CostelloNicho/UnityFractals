@@ -74,9 +74,9 @@ public class FractalTutorial : MonoBehaviour
         _materials[MaxDepth].color = Color.magenta;
     }
 
-    protected void Update ()
+    protected void Update()
     {
-        transform.Rotate(0f, 30f * Time.deltaTime, 0f);
+        transform.Rotate(0f, 30f*Time.deltaTime, 0f);
     }
 
     private IEnumerator CreateChildren()
